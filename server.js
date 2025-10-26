@@ -46,7 +46,7 @@ app.post('/api/chat', async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
+        model: 'sonar',
         messages: messages,
         temperature: 0.7,
         max_tokens: 1024
