@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chatbot Frontend</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  #chat { max-width: 600px; margin: auto; }
+  #messages { min-height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: auto; height: 400px; }
+  .message { margin: 8px 0; padding: 8px 15px; border-radius: 15px; max-width: 75%; }
+  .message.user { background-color: #007bff; color: white; margin-left: auto; }
+  .message.bot { background-color: #e5e5e5; color: #333; margin-right: auto; }
+  #inputArea { display: flex; margin-top: 20px; }
+  #input { flex-grow: 1; padding: 10px; border-radius: 15px; border: 1px solid #ccc; font-size: 16px; }
+  #sendBtn { padding: 10px 20px; border: none; background-color: #007bff; color: white; margin-left: 10px; border-radius: 15px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div id="chat">
+    <div id="messages"></div>
+    <div id="inputArea">
+      <input id="input" type="text" placeholder="Type your message here..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const messages = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+
+    // Update this URL to your deployed backend API
+    const BACKEND_URL = 'https://www.chatlyme.xyz/';
+
+    function addMessage(text, sender) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      div.className = 'message ' + sender;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+      addMessage(message, 'user');
+      input.value = '';
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: message, history: [] })
+        });
+        if (!response.ok) {
+          throw new Error('Network error');
+        }
+        const data = await response.json();
+        addMessage(data.response, 'bot');
+      } catch (error) {
+        addMessage('Error: Could not get response.', 'bot');
+        console.error(error);
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
