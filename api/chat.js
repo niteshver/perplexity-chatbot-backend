@@ -17,8 +17,10 @@ module.exports = async function handler(request) {
     }
 
     // Replace the URL below with your actual backend API endpoint
-    const response = await fetch('https://perplexity-chatbot-backend-git-main-niteshs-projects-f6f9f7c7.vercel.app/api/chat
-', {
+    const BACKEND_URL = 'https://perplexity-chatbot-backend-git-main-niteshs-projects-f6f9f7c7.vercel.app/api/chat';
+
+    // Make the POST request to backend API
+    const response = await fetch(BACKEND_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
