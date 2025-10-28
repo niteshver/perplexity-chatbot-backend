@@ -3,108 +3,129 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gemini Chatbot</title>
+<title>Navi AI Chat</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  
+  /* Reset & Base */
   body {
     margin: 0;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    height: 100vh;
-    font-family: 'Orbitron', sans-serif;
-    color: #cbd5e1;
+    background: #f5f7fa;
+    font-family: 'Inter', sans-serif;
+    color: #15202B;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 40px 0;
+    height: 100vh;
+    position: relative;
   }
 
-  #chat-container {
-    background: rgba(25, 42, 62, 0.85);
-    width: 460px;
-    max-width: 90vw;
+  #app {
+    width: 550px;
+    background: #ffffff;
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    box-shadow: 0 0 20px #00ffd5;
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    overflow: hidden;
   }
 
-  header {
-    font-size: 28px;
-    color: #00ffd5;
-    text-align: center;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px #00ffd5aa;
+  /* Top Navigation */
+  nav {
+    background: #0052cc;
+    padding: 20px 25px;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    user-select: none;
   }
 
+  nav span {
+    color: #FFD700;
+  }
+
+  /* Chat Container */
+  #chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 700px;
+  }
+
+  /* Messages Area */
   #messages {
-    flex: 1;
+    flex-grow: 1;
     overflow-y: auto;
-    padding-right: 10px;
-    border: 1px solid #00ffd5aa;
-    border-radius: 10px;
-    background: #121d29;
-    margin-bottom: 20px;
-    height: 400px;
+    padding: 25px 25px 0 25px;
+    background: #E6F2FF;
+    border-top: 1px solid #ccc;
   }
 
   .message {
-    max-width: 75%;
-    margin: 8px 0;
-    padding: 14px 20px;
-    border-radius: 30px;
-    font-size: 15px;
-    line-height: 1.4;
+    max-width: 80%;
+    margin-bottom: 20px;
+    padding: 18px 25px;
+    border-radius: 35px;
+    font-size: 17px;
+    line-height: 1.5;
+    box-shadow: 0 4px 24px rgb(0 78 221 / 10%);
     opacity: 0;
-    animation: fadeIn 0.6s forwards;
+    animation: fadeIn 0.5s forwards;
   }
 
-  .user {
-    background: linear-gradient(135deg, #00ffd5, #00838f);
-    align-self: flex-end;
-    color: #000;
-    border-bottom-right-radius: 5px;
-  }
-
-  .bot {
-    background: linear-gradient(135deg, #081c24, #205364);
-    color: #cbd5e1;
+  .message.bot {
+    background: #0052cc;
+    color: white;
     align-self: flex-start;
-    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 10px;
   }
 
+  .message.user {
+    background: #FFD700;
+    color: #15202B;
+    align-self: flex-end;
+    border-bottom-right-radius: 10px;
+  }
+
+  /* Input Area */
   #input-area {
     display: flex;
+    border-top: 1px solid #ccc;
+    background: white;
+    padding: 20px 25px;
   }
 
   #input {
-    flex: 1;
-    padding: 14px 20px;
-    border-radius: 30px 0 0 30px;
-    border: none;
+    flex-grow: 1;
+    padding: 18px 25px;
     font-size: 16px;
+    border-radius: 45px 0 0 45px;
+    border: 1px solid #ccc;
     outline: none;
-    background: #0a1b27;
-    color: #cbd5e1;
-    box-shadow: 0 0 8px #00ffd5aa inset;
+    transition: border-color 0.3s ease;
+  }
+
+  #input:focus {
+    border-color: #0052cc;
   }
 
   #send-btn {
-    background: #00ffd5;
+    background: #0052cc;
     border: none;
-    padding: 0 25px;
-    font-weight: bold;
-    font-size: 16px;
-    border-radius: 0 30px 30px 0;
+    padding: 0 35px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 0 45px 45px 0;
+    color: white;
     cursor: pointer;
-    box-shadow: 0 0 12px #00ffd5;
-    color: #000;
     transition: background 0.3s ease;
+    box-shadow: 0 4px 7px rgb(0 78 221 / 50%);
   }
 
   #send-btn:hover {
-    background: #00c3aa;
+    background: #003d99;
   }
 
   @keyframes fadeIn {
@@ -112,28 +133,53 @@
       opacity: 1;
     }
   }
+
+  /* Scrollbar */
+  #messages::-webkit-scrollbar {
+    width: 8px;
+  }
+  #messages::-webkit-scrollbar-thumb {
+    background-color: #0052cc;
+    border-radius: 20px;
+  }
+
+  /* Footer credit */
+  #footer-credit {
+    position: fixed;
+    bottom: 15px;
+    right: 20px;
+    color: #999;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    user-select: none;
+  }
 </style>
 </head>
 <body>
-  <div id="chat-container">
-    <header>Gemini AI</header>
-    <div id="messages" aria-live="polite" aria-label="Chat messages"></div>
-    <div id="input-area">
-      <input id="input" type="text" placeholder="Ask me anything..." aria-label="Type your message" />
-      <button id="send-btn" aria-label="Send message">Send</button>
+  <div id="app">
+    <nav>Navi <span>AI</span></nav>
+    <div id="chat-container">
+      <div id="messages" aria-live="polite" aria-label="Chat messages"></div>
+      <div id="input-area">
+        <input id="input" type="text" placeholder="Type your message here…" aria-label="Chat message input" autocomplete="off" />
+        <button id="send-btn" aria-label="Send message">Send</button>
+      </div>
     </div>
   </div>
 
+  <div id="footer-credit">Created by <strong>Nitesh</strong></div>
+
   <script>
-    const messagesDiv = document.getElementById('messages');
     const input = document.getElementById('input');
     const sendBtn = document.getElementById('send-btn');
+    const messagesDiv = document.getElementById('messages');
 
     function addMessage(text, className) {
-      const div = document.createElement('div');
-      div.className = 'message ' + className;
-      div.textContent = text;
-      messagesDiv.appendChild(div);
+      const msg = document.createElement('div');
+      msg.className = 'message ' + className;
+      msg.textContent = text;
+      messagesDiv.appendChild(msg);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
@@ -142,20 +188,22 @@
       if (!msg) return;
       addMessage(msg, 'user');
       input.value = '';
-      
+
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg, history: [] })
+          body: JSON.stringify({ message: msg, history: [] }) 
         });
+        
         if (!res.ok) {
           addMessage('Error: Unable to get response', 'bot');
           return;
         }
+
         const data = await res.json();
         addMessage(data.response, 'bot');
-      } catch (err) {
+      } catch(e) {
         addMessage('Error: Network problem', 'bot');
       }
     }
