@@ -1,52 +1,51 @@
-const fetch = require('node-fetch');
+const express = require('express');
+const cors = require('cors');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+require('dotenv').config();
 
-module.exports = async function handler(request) {
-  if (request.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
-  }
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
+// Health check
+app.get('/', (req, res) => {
+  res.send('Proxy backend running');
+});
+
+app.post('/api/chat', async (req, res) => {
   try {
-    const body = await request.json();
-    const userMessage = body.message;
+    const { message, history = [], type = 'text' } = req.body;
 
-    if (!userMessage) {
-      return new Response(
-        JSON.stringify({ error: 'Message is required' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    if (!message) return res.status(400).json({ error: 'Message required' });
 
-    // Replace the URL below with your actual backend API endpoint
     const BACKEND_URL = 'https://perplexity-chatbot-backend-git-main-niteshs-projects-f6f9f7c7.vercel.app/api/chat';
 
-    // Make the POST request to backend API
+    // Forward request to your actual backend URL
     const response = await fetch(BACKEND_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`
-      },
-      body: JSON.stringify({ message: userMessage })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, history, type })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      return new Response(
-        JSON.stringify({ error: 'Backend API failure', detail: errorText }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
+      console.error('Error from backend URL:', errorText);
+      return res.status(500).json({ error: 'Upstream backend failure', details: errorText });
     }
 
     const data = await response.json();
 
-    return new Response(
-      JSON.stringify({ response: data.response || 'No response' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ error: 'Internal Server Error', detail: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    res.json(data);
+
+  } catch (err) {
+    console.error('Error in proxy /api/chat:', err);
+    res.status(500).json({ error: 'Server error', details: err.message });
   }
-};
+});
+
+app.listen(PORT, () => {
+  console.log(`Proxy server listening on port ${PORT}`);
+});
