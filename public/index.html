@@ -3,129 +3,130 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Navi AI Chat</title>
+<title>Clean Chatbot</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-  
-  /* Reset & Base */
+
   body {
     margin: 0;
-    background: #f5f7fa;
+    background: #f9fafb;
     font-family: 'Inter', sans-serif;
-    color: #15202B;
+    color: #333;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
     padding: 40px 0;
-    height: 100vh;
-    position: relative;
+    min-height: 100vh;
+    box-sizing: border-box;
   }
 
   #app {
-    width: 550px;
-    background: #ffffff;
-    box-shadow: 0 0 35px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  /* Top Navigation */
   nav {
-    background: #0052cc;
-    padding: 20px 25px;
-    color: white;
+    padding: 20px 30px;
+    font-weight: 700;
     font-size: 24px;
-    font-weight: 600;
     letter-spacing: 1px;
-    user-select: none;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    color: #555;
   }
 
   nav span {
-    color: #FFD700;
+    color: #df7c5b;
   }
 
-  /* Chat Container */
   #chat-container {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    height: 700px;
+    height: 750px;
   }
 
-  /* Messages Area */
   #messages {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 25px 25px 0 25px;
-    background: #E6F2FF;
-    border-top: 1px solid #ccc;
+    padding: 30px 40px 0 40px;
+    background: #fafafa;
+    border-top: 1px solid #ddd;
   }
 
   .message {
     max-width: 80%;
-    margin-bottom: 20px;
-    padding: 18px 25px;
-    border-radius: 35px;
+    margin-bottom: 28px;
+    padding: 20px 28px;
+    border-radius: 28px;
     font-size: 17px;
     line-height: 1.5;
-    box-shadow: 0 4px 24px rgb(0 78 221 / 10%);
+    box-shadow: 0 2px 20px rgba(223, 124, 91, 0.08);
     opacity: 0;
     animation: fadeIn 0.5s forwards;
+    word-wrap: break-word;
   }
 
   .message.bot {
-    background: #0052cc;
-    color: white;
+    background: #f0e4da;
+    color: #555;
     align-self: flex-start;
     border-bottom-left-radius: 10px;
   }
 
   .message.user {
-    background: #FFD700;
-    color: #15202B;
+    background: #df7c5b;
+    color: #fff;
     align-self: flex-end;
     border-bottom-right-radius: 10px;
   }
 
-  /* Input Area */
+  .message img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
+
   #input-area {
     display: flex;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #ddd;
     background: white;
-    padding: 20px 25px;
+    padding: 20px 30px;
   }
 
   #input {
     flex-grow: 1;
-    padding: 18px 25px;
+    padding: 20px 30px;
     font-size: 16px;
-    border-radius: 45px 0 0 45px;
-    border: 1px solid #ccc;
+    border-radius: 40px 0 0 40px;
+    border: 1px solid #ddd;
     outline: none;
     transition: border-color 0.3s ease;
   }
 
   #input:focus {
-    border-color: #0052cc;
+    border-color: #df7c5b;
   }
 
   #send-btn {
-    background: #0052cc;
+    background: #df7c5b;
     border: none;
-    padding: 0 35px;
+    padding: 0 40px;
     font-size: 18px;
-    font-weight: 600;
-    border-radius: 0 45px 45px 0;
+    font-weight: 700;
+    border-radius: 0 40px 40px 0;
     color: white;
     cursor: pointer;
+    box-shadow: 0 4px 12px rgba(223, 124, 91, 0.3);
     transition: background 0.3s ease;
-    box-shadow: 0 4px 7px rgb(0 78 221 / 50%);
   }
 
   #send-btn:hover {
-    background: #003d99;
+    background: #c96f40;
   }
 
   @keyframes fadeIn {
@@ -134,16 +135,6 @@
     }
   }
 
-  /* Scrollbar */
-  #messages::-webkit-scrollbar {
-    width: 8px;
-  }
-  #messages::-webkit-scrollbar-thumb {
-    background-color: #0052cc;
-    border-radius: 20px;
-  }
-
-  /* Footer credit */
   #footer-credit {
     position: fixed;
     bottom: 15px;
@@ -154,6 +145,14 @@
     font-family: 'Inter', sans-serif;
     user-select: none;
   }
+
+  #messages::-webkit-scrollbar {
+    width: 8px;
+  }
+  #messages::-webkit-scrollbar-thumb {
+    background-color: #df7c5b;
+    border-radius: 20px;
+  }
 </style>
 </head>
 <body>
@@ -162,7 +161,7 @@
     <div id="chat-container">
       <div id="messages" aria-live="polite" aria-label="Chat messages"></div>
       <div id="input-area">
-        <input id="input" type="text" placeholder="Type your message here…" aria-label="Chat message input" autocomplete="off" />
+        <input id="input" type="text" placeholder="Type your message…" aria-label="Chat message input" autocomplete="off" />
         <button id="send-btn" aria-label="Send message">Send</button>
       </div>
     </div>
@@ -175,11 +174,19 @@
     const sendBtn = document.getElementById('send-btn');
     const messagesDiv = document.getElementById('messages');
 
-    function addMessage(text, className) {
-      const msg = document.createElement('div');
-      msg.className = 'message ' + className;
-      msg.textContent = text;
-      messagesDiv.appendChild(msg);
+    function addMessage(text, className, isImage = false) {
+      if (isImage) {
+        const img = document.createElement('img');
+        img.src = text;
+        img.alt = "Generated Image";
+        img.className = className;
+        messagesDiv.appendChild(img);
+      } else {
+        const msg = document.createElement('div');
+        msg.className = 'message ' + className;
+        msg.textContent = text;
+        messagesDiv.appendChild(msg);
+      }
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
@@ -193,17 +200,21 @@
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg, history: [] }) 
+          body: JSON.stringify({ message: msg, history: [], type: msg.toLowerCase().startsWith('generate image') ? 'image' : 'text' })
         });
-        
+
         if (!res.ok) {
           addMessage('Error: Unable to get response', 'bot');
           return;
         }
 
         const data = await res.json();
-        addMessage(data.response, 'bot');
-      } catch(e) {
+        if (data.type === 'image' && data.imageUrl) {
+          addMessage(data.imageUrl, 'bot', true);
+        } else {
+          addMessage(data.response, 'bot');
+        }
+      } catch (e) {
         addMessage('Error: Network problem', 'bot');
       }
     }
