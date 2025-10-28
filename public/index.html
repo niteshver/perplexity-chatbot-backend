@@ -6,7 +6,6 @@
 <title>Enhanced Navi AI Chat</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
   body {
     margin: 0;
     background: #f9fafb;
@@ -18,7 +17,6 @@
     min-height: 100vh;
     box-sizing: border-box;
   }
-
   #app {
     width: 600px;
     background: #fff;
@@ -28,7 +26,6 @@
     flex-direction: column;
     overflow: hidden;
   }
-
   nav {
     padding: 20px 30px;
     font-weight: 700;
@@ -38,18 +35,15 @@
     text-align: center;
     color: #555;
   }
-
   nav span {
     color: #df7c5b;
   }
-
   #chat-container {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     height: 750px;
   }
-
   #messages {
     flex-grow: 1;
     overflow-y: auto;
@@ -57,7 +51,6 @@
     background: #fafafa;
     border-top: 1px solid #ddd;
   }
-
   .message {
     max-width: 80%;
     margin-bottom: 28px;
@@ -71,34 +64,29 @@
     word-wrap: break-word;
     position: relative;
   }
-
   .message.bot {
     background: #f0e4da;
     color: #555;
     align-self: flex-start;
     border-bottom-left-radius: 10px;
   }
-
   .message.user {
     background: #df7c5b;
     color: #fff;
     align-self: flex-end;
     border-bottom-right-radius: 10px;
   }
-
   .message img {
     max-width: 100%;
     border-radius: 12px;
     margin-top: 10px;
   }
-
   #input-area {
     display: flex;
     border-top: 1px solid #ddd;
     background: white;
     padding: 20px 30px;
   }
-
   #input {
     flex-grow: 1;
     padding: 20px 30px;
@@ -108,11 +96,9 @@
     outline: none;
     transition: border-color 0.3s ease;
   }
-
   #input:focus {
     border-color: #df7c5b;
   }
-
   #send-btn {
     background: #df7c5b;
     border: none;
@@ -125,11 +111,9 @@
     box-shadow: 0 4px 12px rgba(223, 124, 91, 0.3);
     transition: background 0.3s ease;
   }
-
   #send-btn:hover {
     background: #c96f40;
   }
-
   #voice-btn {
     background: none;
     border: none;
@@ -139,13 +123,11 @@
     color: #df7c5b;
     outline: none;
   }
-
   @keyframes fadeIn {
     to {
       opacity: 1;
     }
   }
-
   #footer-credit {
     position: fixed;
     bottom: 15px;
@@ -156,7 +138,6 @@
     font-family: 'Inter', sans-serif;
     user-select: none;
   }
-
   #messages::-webkit-scrollbar {
     width: 8px;
   }
@@ -182,6 +163,8 @@
   <div id="footer-credit">Created by <strong>Nitesh</strong></div>
 
   <script>
+    const BACKEND_URL = 'https://perplexity-chatbot-backend.vercel.app/api/chat';
+
     const input = document.getElementById('input');
     const sendBtn = document.getElementById('send-btn');
     const voiceBtn = document.getElementById('voice-btn');
@@ -214,7 +197,7 @@
       if (!message) input.value = '';
 
       try {
-        const res = await fetch('/api/chat', {
+        const res = await fetch(BACKEND_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: msg, history: chatHistory, type: msg.toLowerCase().startsWith('generate image') ? 'image' : 'text' })
