@@ -67,7 +67,7 @@ app.post('/api/chat', async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'Sonar',
+        model: 'sonar',
         messages: messages,
         temperature: 0.7,
         max_tokens: 1024
