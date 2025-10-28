@@ -1,65 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simple Chatbot</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    #chat { max-width: 600px; margin: auto; }
-    #messages { border: 1px solid #ccc; padding: 15px; height: 400px; overflow-y: auto; }
-    .message { margin: 8px 0; padding: 10px; border-radius: 20px; max-width: 75%; }
-    .message.user { background-color: #007bff; color: white; margin-left: auto; }
-    .message.bot { background-color: #e5e5e5; margin-right: auto; }
-    #inputArea { display: flex; margin-top: 20px; }
-    #input { flex-grow: 1; padding: 12px 20px; border-radius: 20px; border: 1px solid #ccc; }
-    #sendBtn { padding: 12px 25px; background: #007bff; border: none; color: white; border-radius: 20px; cursor: pointer; margin-left: 12px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chatbot</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background:#f0f0f0; }
+  #chat { max-width: 600px; margin: auto; }
+  #messages { border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px; background:#fff; }
+  .msg { margin: 5px 0; padding: 10px; border-radius: 5px; }
+  .user { background:#007bff; color:#fff; margin-left:auto; }
+  .bot { background:#eee; color:#000; margin-right:auto; }
+</style>
 </head>
 <body>
-  <div id="chat">
-    <div id="messages"></div>
-    <div id="inputArea">
-      <input id="input" placeholder="Type your message..." />
-      <button id="sendBtn">Send</button>
-    </div>
-  </div>
+<h2>Chat with AI</h2>
+<div id="chat">
+<div id="messages"></div>
+<input type="text" id="input" placeholder="Type message" />
+<button onclick="send()">Send</button>
+</div>
+<script>
+const messagesDiv = document.getElementById('messages');
+const input = document.getElementById('input');
 
-  <script>
-    const messages = document.getElementById("messages");
-    const input = document.getElementById("input");
-    const sendBtn = document.getElementById("sendBtn");
+function addMessage(text, className) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + className;
+  div.innerText = text;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-    function addMessage(text, sender) {
-      const div = document.createElement("div");
-      div.textContent = text;
-      div.className = "message " + sender;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    async function sendMessage() {
-      const message = input.value.trim();
-      if (!message) return;
-      addMessage(message, "user");
-      input.value = "";
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
-        });
-        if (!res.ok) throw new Error("Network error");
-        const data = await res.json();
-        addMessage(data.response, "bot");
-      } catch (error) {
-        addMessage("Error getting response.", "bot");
-        console.error(error);
-      }
-    }
-
-    sendBtn.onclick = sendMessage;
-    input.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
-  </script>
+async function send() {
+  const msg = input.value;
+  addMessage(msg, 'user');
+  input.value = '';
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, history: [] })
+    });
+    const data = await res.json();
+    addMessage(data.response, 'bot');
+  } catch(e) {
+    addMessage('Error:', 'bot');
+  }
+}
+</script>
 </body>
 </html>
